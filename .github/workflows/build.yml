@@ -29,6 +29,24 @@ jobs:
           flutter pub add shared_preferences file_picker:^8.3.7 open_filex path_provider shamsi_date
           sed -i 's/android:label="[^"]*"/android:label="My planner"/' android/app/src/main/AndroidManifest.xml
 
+      - name: Raise compileSdk of plugins to 36
+        run: |
+          cat > /tmp/fix.kts <<'EOF'
+          subprojects {
+              if (project.name != "app") {
+                  afterEvaluate {
+                      val ext = extensions.findByName("android")
+                      if (ext is com.android.build.gradle.BaseExtension) {
+                          ext.compileSdkVersion(36)
+                      }
+                  }
+              }
+          }
+
+          EOF
+          cat /tmp/fix.kts android/build.gradle.kts > /tmp/new.kts
+          mv /tmp/new.kts android/build.gradle.kts
+
       - name: Build release APK
         run: flutter build apk --release
 
