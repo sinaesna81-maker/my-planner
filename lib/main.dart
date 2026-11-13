@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:open_filex/open_fiْlex.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -249,16 +249,7 @@ class _HomeState extends State<Home> {
       ),
       body: GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onHorizontalDragEnd: tab == 0
-            ? (d) {
-                final v = d.primaryVelocity ?? 0;
-                if (v > 300) {
-                  _moveDay(1); // swipe right -> next day
-                } else if (v < -300) {
-                  _moveDay(-1); // swipe left -> previous day
-                }
-              }
-            : null,
+        onHorizontalDragEnd: tab == 0 ? _onSwipe : null,
         child: Column(children: [
         if (tab == 0)
           Padding(
@@ -341,6 +332,15 @@ class _HomeState extends State<Home> {
       ]),
       ),
     );
+  }
+
+  void _onSwipe(DragEndDetails details) {
+    final double v = details.primaryVelocity ?? 0.0;
+    if (v > 300.0) {
+      _moveDay(1); // swipe right -> next day
+    } else if (v < -300.0) {
+      _moveDay(-1); // swipe left -> previous day
+    }
   }
 
   void _moveDay(int n) {
