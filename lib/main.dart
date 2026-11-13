@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:open_filex/open_filex.dart';
+import 'package:open_filex/open_fiْlex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shamsi_date/shamsi_date.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -247,7 +247,19 @@ class _HomeState extends State<Home> {
           NavigationDestination(icon: Icon(Icons.flag_outlined), selectedIcon: Icon(Icons.flag), label: 'اهداف بلندمدت'),
         ],
       ),
-      body: Column(children: [
+      body: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onHorizontalDragEnd: tab == 0
+            ? (d) {
+                final v = d.primaryVelocity ?? 0;
+                if (v > 300) {
+                  _moveDay(1); // swipe right -> next day
+                } else if (v < -300) {
+                  _moveDay(-1); // swipe left -> previous day
+                }
+              }
+            : null,
+        child: Column(children: [
         if (tab == 0)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -327,7 +339,20 @@ class _HomeState extends State<Home> {
                 ),
         ),
       ]),
+      ),
     );
+  }
+
+  void _moveDay(int n) {
+    final d = DateTime(sel.year, sel.month, sel.day + n);
+    final now = DateTime.now();
+    final t = DateTime.utc(now.year, now.month, now.day);
+    final start = t.subtract(Duration(days: (t.weekday + 1) % 7));
+    final diff = DateTime.utc(d.year, d.month, d.day).difference(start).inDays;
+    setState(() {
+      sel = d;
+      week = (diff / 7).floor();
+    });
   }
 
   void _goToday() => setState(() {
