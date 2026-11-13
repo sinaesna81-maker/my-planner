@@ -232,6 +232,13 @@ class _HomeState extends State<Home> {
               ]
             : null,
       ),
+      floatingActionButton: tab == 0 && (week != 0 || _key(sel) != _key(DateTime.now()))
+          ? FloatingActionButton.extended(
+              onPressed: _goToday,
+              icon: const Icon(Icons.today),
+              label: const Text('امروز'),
+            )
+          : null,
       bottomNavigationBar: NavigationBar(
         selectedIndex: tab,
         onDestinationSelected: (i) => setState(() => tab = i),
@@ -322,6 +329,12 @@ class _HomeState extends State<Home> {
       ]),
     );
   }
+
+  void _goToday() => setState(() {
+        week = 0;
+        final n = DateTime.now();
+        sel = DateTime(n.year, n.month, n.day);
+      });
 
   void _shift(int n) => setState(() {
         week += n;
