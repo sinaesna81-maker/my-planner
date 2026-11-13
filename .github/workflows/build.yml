@@ -26,7 +26,7 @@ jobs:
           cp lib/main.dart /tmp/main.dart
           flutter create --org com.sina --project-name my_planner --platforms android .
           cp /tmp/main.dart lib/main.dart
-          flutter pub add shared_preferences file_picker open_filex path_provider shamsi_date
+          flutter pub add shared_preferences file_picker:^8.3.7 open_filex path_provider shamsi_date
           sed -i 's/android:label="[^"]*"/android:label="My planner"/' android/app/src/main/AndroidManifest.xml
 
       - name: Build release APK
